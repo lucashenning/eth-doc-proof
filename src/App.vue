@@ -1,17 +1,25 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="row">
+      <div class="col-6">
+        <FileUpload v-on:change="funct"/>
+      </div>
+      <div class="col-6">
+
+      </div>
+    </div>
+    
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import FileUpload from './components/FileUpload.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    FileUpload
   }
 }
 </script>
