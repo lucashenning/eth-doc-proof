@@ -1,5 +1,9 @@
 <template>
   <div id="app" class='container'>
+
+    <div class="row">
+      <PdfCreator />
+    </div>
     
     <div class="row">
       <BcHashWriter />
@@ -16,14 +20,15 @@
 import FileUpload from './components/FileUpload.vue';
 import BcHashReader from './components/BcHashReader.vue';
 import BcHashWriter from './components/BcHashWriter.vue';
-
+import PdfCreator from './components/PdfCreator.vue';
 
 export default {
   name: 'app',
   components: {
     FileUpload,
     BcHashReader,
-    BcHashWriter
+    BcHashWriter,
+    PdfCreator
   },
 
   methods: {
