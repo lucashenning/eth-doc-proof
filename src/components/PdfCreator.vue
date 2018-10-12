@@ -23,6 +23,8 @@ export default {
     createPdf() {
       var doc = new jsPDF();
       doc.text(this.text, 10, 10);
+      doc.setFileId(1);
+      doc.setCreationDate(new Date('2018-12-24T00:00:00'));
       doc.save('a4.pdf');
     }
   }
