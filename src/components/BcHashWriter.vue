@@ -9,9 +9,13 @@
 </template>
 
 <script>
-import { web3, defaultAccount, loadMetaMask } from './web3helper';
+/* eslint-disable */
+
+import { web3, defaultAccount, loadMetaMask, loadGanache } from './web3helper';
 import FileUpload from './FileUpload.vue';
 import SHA256 from "crypto-js/sha256";
+
+import json from '../../blockchain/build/contracts/HashStorage.json'
 
 export default {
   name: 'BcHashWriter',
@@ -22,7 +26,8 @@ export default {
   data: function () {
     return {
       hash: 'empty',
-      txStatus: ''
+      txStatus: '',
+      myContractJson: json
     }
   },
 
@@ -43,23 +48,33 @@ export default {
     },
 
     writeHash () {
-      if (loadMetaMask()) {
-        web3.eth.sendTransaction({
-          from: defaultAccount,
-          to: "0x91d0c00cc923244ed82ab483acb3f10f9aa345b6", 
-          data: web3.utils.asciiToHex(this.hash),
-          gasLimit: 50000,
+      if (loadGanache()) {
+
+        console.log(this.myContractJson);
+
+        let myContract = new web3.eth.Contract(this.myContractJson.abi);
+
+        console.log(myContract);
+
+        myContract.deploy({
+            data: this.myContractJson.bytecode,
+            arguments: [ web3.utils.asciiToHex(this.hash) ]
         })
-        .on("transactionHash", txHash => {
-          console.log("Final Tx Hash: " + txHash + " Waiting for confirmation...");
-          this.txStatus = txHash ;
+        .send({ 
+            from: '0x2e0961641a96e7FFEa3477Ffe798E4bA98b1A34E',
+            gas: 1500000,
+            gasPrice: '30000000000000'
+        }, function(error, transactionHash){ })
+        .on('error', function(error){ })
+        .on('transactionHash', function(transactionHash){  })
+        .on('receipt', function(receipt){
+          console.log(receipt.contractAddress) // contains the new contract address
         })
-        .on('confirmation', (confirmationNumber , txReceipt ) => {
-          console.log("Confirmation received - "+confirmationNumber+" - Tx: "+receipt.transactionHash);
-        }) 
-        .on('receipt', (txReceipt) => {
-          console.log("Public Chain - Confirmation. Tx " + txReceipt.transactionHash + " was mined in block " + txReceipt.blockNumber);
-        })
+        .on('confirmation', function(confirmationNumber, receipt){  })
+        .then(function(newContractInstance){
+            console.log(newContractInstance.options.address) // instance with the new contract address
+        });
+
       }
     }
 

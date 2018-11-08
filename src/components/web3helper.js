@@ -14,3 +14,8 @@ export function loadMetaMask() {
     web3.setProvider(window.web3.currentProvider);
     return true;
 }
+
+export function loadGanache() {
+    web3.setProvider( new Web3.providers.HttpProvider('HTTP://127.0.0.1:7545') );
+    return true;
+}
